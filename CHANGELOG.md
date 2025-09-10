@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0 (2025-09-10)
+
+Full Changelog: [v0.0.3...v0.1.0](https://github.com/dataleonlabs/dataleonlabs-kotlin/compare/v0.0.3...v0.1.0)
+
+### Features
+
+* **api:** api update ([7532516](https://github.com/dataleonlabs/dataleonlabs-kotlin/commit/7532516ccc071b52571c13c79f0c3865e046570a))
+
 ## 0.0.3 (2025-09-04)
 
 Full Changelog: [v0.0.2...v0.0.3](https://github.com/dataleonlabs/dataleonlabs-kotlin/compare/v0.0.2...v0.0.3)
