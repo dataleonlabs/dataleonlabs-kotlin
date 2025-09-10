@@ -1641,6 +1641,7 @@ private constructor(
         private val gender: JsonField<String>,
         private val lastName: JsonField<String>,
         private val maidenName: JsonField<String>,
+        private val nationality: JsonField<String>,
         private val phoneNumber: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -1667,6 +1668,9 @@ private constructor(
             @JsonProperty("maiden_name")
             @ExcludeMissing
             maidenName: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("nationality")
+            @ExcludeMissing
+            nationality: JsonField<String> = JsonMissing.of(),
             @JsonProperty("phone_number")
             @ExcludeMissing
             phoneNumber: JsonField<String> = JsonMissing.of(),
@@ -1679,6 +1683,7 @@ private constructor(
             gender,
             lastName,
             maidenName,
+            nationality,
             phoneNumber,
             mutableMapOf(),
         )
@@ -1746,6 +1751,14 @@ private constructor(
          *   if the server responded with an unexpected value).
          */
         fun maidenName(): String? = maidenName.getNullable("maiden_name")
+
+        /**
+         * Nationality of the individual (ISO 3166-1 alpha-3 country code).
+         *
+         * @throws DataleonlabsInvalidDataException if the JSON field has an unexpected type (e.g.
+         *   if the server responded with an unexpected value).
+         */
+        fun nationality(): String? = nationality.getNullable("nationality")
 
         /**
          * Contact phone number including country code.
@@ -1817,6 +1830,15 @@ private constructor(
         fun _maidenName(): JsonField<String> = maidenName
 
         /**
+         * Returns the raw JSON value of [nationality].
+         *
+         * Unlike [nationality], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("nationality")
+        @ExcludeMissing
+        fun _nationality(): JsonField<String> = nationality
+
+        /**
          * Returns the raw JSON value of [phoneNumber].
          *
          * Unlike [phoneNumber], this method doesn't throw if the JSON field has an unexpected type.
@@ -1854,6 +1876,7 @@ private constructor(
             private var gender: JsonField<String> = JsonMissing.of()
             private var lastName: JsonField<String> = JsonMissing.of()
             private var maidenName: JsonField<String> = JsonMissing.of()
+            private var nationality: JsonField<String> = JsonMissing.of()
             private var phoneNumber: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -1866,6 +1889,7 @@ private constructor(
                 gender = person.gender
                 lastName = person.lastName
                 maidenName = person.maidenName
+                nationality = person.nationality
                 phoneNumber = person.phoneNumber
                 additionalProperties = person.additionalProperties.toMutableMap()
             }
@@ -1969,6 +1993,20 @@ private constructor(
              */
             fun maidenName(maidenName: JsonField<String>) = apply { this.maidenName = maidenName }
 
+            /** Nationality of the individual (ISO 3166-1 alpha-3 country code). */
+            fun nationality(nationality: String) = nationality(JsonField.of(nationality))
+
+            /**
+             * Sets [Builder.nationality] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.nationality] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun nationality(nationality: JsonField<String>) = apply {
+                this.nationality = nationality
+            }
+
             /** Contact phone number including country code. */
             fun phoneNumber(phoneNumber: String) = phoneNumber(JsonField.of(phoneNumber))
 
@@ -2017,6 +2055,7 @@ private constructor(
                     gender,
                     lastName,
                     maidenName,
+                    nationality,
                     phoneNumber,
                     additionalProperties.toMutableMap(),
                 )
@@ -2037,6 +2076,7 @@ private constructor(
             gender()
             lastName()
             maidenName()
+            nationality()
             phoneNumber()
             validated = true
         }
@@ -2064,6 +2104,7 @@ private constructor(
                 (if (gender.asKnown() == null) 0 else 1) +
                 (if (lastName.asKnown() == null) 0 else 1) +
                 (if (maidenName.asKnown() == null) 0 else 1) +
+                (if (nationality.asKnown() == null) 0 else 1) +
                 (if (phoneNumber.asKnown() == null) 0 else 1)
 
         override fun equals(other: Any?): Boolean {
@@ -2080,6 +2121,7 @@ private constructor(
                 gender == other.gender &&
                 lastName == other.lastName &&
                 maidenName == other.maidenName &&
+                nationality == other.nationality &&
                 phoneNumber == other.phoneNumber &&
                 additionalProperties == other.additionalProperties
         }
@@ -2094,6 +2136,7 @@ private constructor(
                 gender,
                 lastName,
                 maidenName,
+                nationality,
                 phoneNumber,
                 additionalProperties,
             )
@@ -2102,7 +2145,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Person{birthday=$birthday, email=$email, faceImageSignedUrl=$faceImageSignedUrl, firstName=$firstName, fullName=$fullName, gender=$gender, lastName=$lastName, maidenName=$maidenName, phoneNumber=$phoneNumber, additionalProperties=$additionalProperties}"
+            "Person{birthday=$birthday, email=$email, faceImageSignedUrl=$faceImageSignedUrl, firstName=$firstName, fullName=$fullName, gender=$gender, lastName=$lastName, maidenName=$maidenName, nationality=$nationality, phoneNumber=$phoneNumber, additionalProperties=$additionalProperties}"
     }
 
     /**

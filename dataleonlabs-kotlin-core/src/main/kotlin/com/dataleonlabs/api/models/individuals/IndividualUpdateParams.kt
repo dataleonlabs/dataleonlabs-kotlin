@@ -634,6 +634,7 @@ private constructor(
         private val gender: JsonField<Gender>,
         private val lastName: JsonField<String>,
         private val maidenName: JsonField<String>,
+        private val nationality: JsonField<String>,
         private val phoneNumber: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -654,6 +655,9 @@ private constructor(
             @JsonProperty("maiden_name")
             @ExcludeMissing
             maidenName: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("nationality")
+            @ExcludeMissing
+            nationality: JsonField<String> = JsonMissing.of(),
             @JsonProperty("phone_number")
             @ExcludeMissing
             phoneNumber: JsonField<String> = JsonMissing.of(),
@@ -664,6 +668,7 @@ private constructor(
             gender,
             lastName,
             maidenName,
+            nationality,
             phoneNumber,
             mutableMapOf(),
         )
@@ -715,6 +720,14 @@ private constructor(
          *   if the server responded with an unexpected value).
          */
         fun maidenName(): String? = maidenName.getNullable("maiden_name")
+
+        /**
+         * Nationality of the individual (ISO 3166-1 alpha-3 country code).
+         *
+         * @throws DataleonlabsInvalidDataException if the JSON field has an unexpected type (e.g.
+         *   if the server responded with an unexpected value).
+         */
+        fun nationality(): String? = nationality.getNullable("nationality")
 
         /**
          * Phone number of the individual.
@@ -769,6 +782,15 @@ private constructor(
         fun _maidenName(): JsonField<String> = maidenName
 
         /**
+         * Returns the raw JSON value of [nationality].
+         *
+         * Unlike [nationality], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("nationality")
+        @ExcludeMissing
+        fun _nationality(): JsonField<String> = nationality
+
+        /**
          * Returns the raw JSON value of [phoneNumber].
          *
          * Unlike [phoneNumber], this method doesn't throw if the JSON field has an unexpected type.
@@ -804,6 +826,7 @@ private constructor(
             private var gender: JsonField<Gender> = JsonMissing.of()
             private var lastName: JsonField<String> = JsonMissing.of()
             private var maidenName: JsonField<String> = JsonMissing.of()
+            private var nationality: JsonField<String> = JsonMissing.of()
             private var phoneNumber: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -814,6 +837,7 @@ private constructor(
                 gender = person.gender
                 lastName = person.lastName
                 maidenName = person.maidenName
+                nationality = person.nationality
                 phoneNumber = person.phoneNumber
                 additionalProperties = person.additionalProperties.toMutableMap()
             }
@@ -890,6 +914,20 @@ private constructor(
              */
             fun maidenName(maidenName: JsonField<String>) = apply { this.maidenName = maidenName }
 
+            /** Nationality of the individual (ISO 3166-1 alpha-3 country code). */
+            fun nationality(nationality: String) = nationality(JsonField.of(nationality))
+
+            /**
+             * Sets [Builder.nationality] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.nationality] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun nationality(nationality: JsonField<String>) = apply {
+                this.nationality = nationality
+            }
+
             /** Phone number of the individual. */
             fun phoneNumber(phoneNumber: String) = phoneNumber(JsonField.of(phoneNumber))
 
@@ -936,6 +974,7 @@ private constructor(
                     gender,
                     lastName,
                     maidenName,
+                    nationality,
                     phoneNumber,
                     additionalProperties.toMutableMap(),
                 )
@@ -954,6 +993,7 @@ private constructor(
             gender()?.validate()
             lastName()
             maidenName()
+            nationality()
             phoneNumber()
             validated = true
         }
@@ -979,6 +1019,7 @@ private constructor(
                 (gender.asKnown()?.validity() ?: 0) +
                 (if (lastName.asKnown() == null) 0 else 1) +
                 (if (maidenName.asKnown() == null) 0 else 1) +
+                (if (nationality.asKnown() == null) 0 else 1) +
                 (if (phoneNumber.asKnown() == null) 0 else 1)
 
         /** Gender of the individual (M for male, F for female). */
@@ -1122,6 +1163,7 @@ private constructor(
                 gender == other.gender &&
                 lastName == other.lastName &&
                 maidenName == other.maidenName &&
+                nationality == other.nationality &&
                 phoneNumber == other.phoneNumber &&
                 additionalProperties == other.additionalProperties
         }
@@ -1134,6 +1176,7 @@ private constructor(
                 gender,
                 lastName,
                 maidenName,
+                nationality,
                 phoneNumber,
                 additionalProperties,
             )
@@ -1142,7 +1185,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Person{birthday=$birthday, email=$email, firstName=$firstName, gender=$gender, lastName=$lastName, maidenName=$maidenName, phoneNumber=$phoneNumber, additionalProperties=$additionalProperties}"
+            "Person{birthday=$birthday, email=$email, firstName=$firstName, gender=$gender, lastName=$lastName, maidenName=$maidenName, nationality=$nationality, phoneNumber=$phoneNumber, additionalProperties=$additionalProperties}"
     }
 
     /** Technical metadata related to the request or processing. */
@@ -1151,6 +1194,7 @@ private constructor(
         private val activeAmlSuspicions: JsonField<Boolean>,
         private val callbackUrl: JsonField<String>,
         private val callbackUrlNotification: JsonField<String>,
+        private val filteringScoreAmlSuspicions: JsonField<Float>,
         private val language: JsonField<String>,
         private val rawData: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -1167,6 +1211,9 @@ private constructor(
             @JsonProperty("callback_url_notification")
             @ExcludeMissing
             callbackUrlNotification: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("filtering_score_aml_suspicions")
+            @ExcludeMissing
+            filteringScoreAmlSuspicions: JsonField<Float> = JsonMissing.of(),
             @JsonProperty("language")
             @ExcludeMissing
             language: JsonField<String> = JsonMissing.of(),
@@ -1175,6 +1222,7 @@ private constructor(
             activeAmlSuspicions,
             callbackUrl,
             callbackUrlNotification,
+            filteringScoreAmlSuspicions,
             language,
             rawData,
             mutableMapOf(),
@@ -1206,6 +1254,15 @@ private constructor(
          */
         fun callbackUrlNotification(): String? =
             callbackUrlNotification.getNullable("callback_url_notification")
+
+        /**
+         * Minimum filtering score (between 0 and 1) for AML suspicions to be considered.
+         *
+         * @throws DataleonlabsInvalidDataException if the JSON field has an unexpected type (e.g.
+         *   if the server responded with an unexpected value).
+         */
+        fun filteringScoreAmlSuspicions(): Float? =
+            filteringScoreAmlSuspicions.getNullable("filtering_score_aml_suspicions")
 
         /**
          * Preferred language for communication (e.g., "eng", "fra").
@@ -1253,6 +1310,16 @@ private constructor(
         fun _callbackUrlNotification(): JsonField<String> = callbackUrlNotification
 
         /**
+         * Returns the raw JSON value of [filteringScoreAmlSuspicions].
+         *
+         * Unlike [filteringScoreAmlSuspicions], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("filtering_score_aml_suspicions")
+        @ExcludeMissing
+        fun _filteringScoreAmlSuspicions(): JsonField<Float> = filteringScoreAmlSuspicions
+
+        /**
          * Returns the raw JSON value of [language].
          *
          * Unlike [language], this method doesn't throw if the JSON field has an unexpected type.
@@ -1290,6 +1357,7 @@ private constructor(
             private var activeAmlSuspicions: JsonField<Boolean> = JsonMissing.of()
             private var callbackUrl: JsonField<String> = JsonMissing.of()
             private var callbackUrlNotification: JsonField<String> = JsonMissing.of()
+            private var filteringScoreAmlSuspicions: JsonField<Float> = JsonMissing.of()
             private var language: JsonField<String> = JsonMissing.of()
             private var rawData: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -1298,6 +1366,7 @@ private constructor(
                 activeAmlSuspicions = technicalData.activeAmlSuspicions
                 callbackUrl = technicalData.callbackUrl
                 callbackUrlNotification = technicalData.callbackUrlNotification
+                filteringScoreAmlSuspicions = technicalData.filteringScoreAmlSuspicions
                 language = technicalData.language
                 rawData = technicalData.rawData
                 additionalProperties = technicalData.additionalProperties.toMutableMap()
@@ -1348,6 +1417,21 @@ private constructor(
              */
             fun callbackUrlNotification(callbackUrlNotification: JsonField<String>) = apply {
                 this.callbackUrlNotification = callbackUrlNotification
+            }
+
+            /** Minimum filtering score (between 0 and 1) for AML suspicions to be considered. */
+            fun filteringScoreAmlSuspicions(filteringScoreAmlSuspicions: Float) =
+                filteringScoreAmlSuspicions(JsonField.of(filteringScoreAmlSuspicions))
+
+            /**
+             * Sets [Builder.filteringScoreAmlSuspicions] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.filteringScoreAmlSuspicions] with a well-typed
+             * [Float] value instead. This method is primarily for setting the field to an
+             * undocumented or not yet supported value.
+             */
+            fun filteringScoreAmlSuspicions(filteringScoreAmlSuspicions: JsonField<Float>) = apply {
+                this.filteringScoreAmlSuspicions = filteringScoreAmlSuspicions
             }
 
             /** Preferred language for communication (e.g., "eng", "fra"). */
@@ -1403,6 +1487,7 @@ private constructor(
                     activeAmlSuspicions,
                     callbackUrl,
                     callbackUrlNotification,
+                    filteringScoreAmlSuspicions,
                     language,
                     rawData,
                     additionalProperties.toMutableMap(),
@@ -1419,6 +1504,7 @@ private constructor(
             activeAmlSuspicions()
             callbackUrl()
             callbackUrlNotification()
+            filteringScoreAmlSuspicions()
             language()
             rawData()
             validated = true
@@ -1442,6 +1528,7 @@ private constructor(
             (if (activeAmlSuspicions.asKnown() == null) 0 else 1) +
                 (if (callbackUrl.asKnown() == null) 0 else 1) +
                 (if (callbackUrlNotification.asKnown() == null) 0 else 1) +
+                (if (filteringScoreAmlSuspicions.asKnown() == null) 0 else 1) +
                 (if (language.asKnown() == null) 0 else 1) +
                 (if (rawData.asKnown() == null) 0 else 1)
 
@@ -1454,6 +1541,7 @@ private constructor(
                 activeAmlSuspicions == other.activeAmlSuspicions &&
                 callbackUrl == other.callbackUrl &&
                 callbackUrlNotification == other.callbackUrlNotification &&
+                filteringScoreAmlSuspicions == other.filteringScoreAmlSuspicions &&
                 language == other.language &&
                 rawData == other.rawData &&
                 additionalProperties == other.additionalProperties
@@ -1464,6 +1552,7 @@ private constructor(
                 activeAmlSuspicions,
                 callbackUrl,
                 callbackUrlNotification,
+                filteringScoreAmlSuspicions,
                 language,
                 rawData,
                 additionalProperties,
@@ -1473,7 +1562,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "TechnicalData{activeAmlSuspicions=$activeAmlSuspicions, callbackUrl=$callbackUrl, callbackUrlNotification=$callbackUrlNotification, language=$language, rawData=$rawData, additionalProperties=$additionalProperties}"
+            "TechnicalData{activeAmlSuspicions=$activeAmlSuspicions, callbackUrl=$callbackUrl, callbackUrlNotification=$callbackUrlNotification, filteringScoreAmlSuspicions=$filteringScoreAmlSuspicions, language=$language, rawData=$rawData, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
