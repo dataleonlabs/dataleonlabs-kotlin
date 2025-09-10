@@ -26,6 +26,7 @@ private constructor(
     private val disableNotification: JsonField<Boolean>,
     private val disableNotificationDate: JsonField<OffsetDateTime>,
     private val exportType: JsonField<String>,
+    private val filteringScoreAmlSuspicions: JsonField<Float>,
     private val finishedAt: JsonField<OffsetDateTime>,
     private val ip: JsonField<String>,
     private val language: JsonField<String>,
@@ -66,6 +67,9 @@ private constructor(
         @JsonProperty("export_type")
         @ExcludeMissing
         exportType: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("filtering_score_aml_suspicions")
+        @ExcludeMissing
+        filteringScoreAmlSuspicions: JsonField<Float> = JsonMissing.of(),
         @JsonProperty("finished_at")
         @ExcludeMissing
         finishedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -106,6 +110,7 @@ private constructor(
         disableNotification,
         disableNotificationDate,
         exportType,
+        filteringScoreAmlSuspicions,
         finishedAt,
         ip,
         language,
@@ -188,6 +193,15 @@ private constructor(
      *   the server responded with an unexpected value).
      */
     fun exportType(): String? = exportType.getNullable("export_type")
+
+    /**
+     * Minimum filtering score (between 0 and 1) for AML suspicions to be considered.
+     *
+     * @throws DataleonlabsInvalidDataException if the JSON field has an unexpected type (e.g. if
+     *   the server responded with an unexpected value).
+     */
+    fun filteringScoreAmlSuspicions(): Float? =
+        filteringScoreAmlSuspicions.getNullable("filtering_score_aml_suspicions")
 
     /**
      * Timestamp when the process finished.
@@ -367,6 +381,16 @@ private constructor(
     @JsonProperty("export_type") @ExcludeMissing fun _exportType(): JsonField<String> = exportType
 
     /**
+     * Returns the raw JSON value of [filteringScoreAmlSuspicions].
+     *
+     * Unlike [filteringScoreAmlSuspicions], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("filtering_score_aml_suspicions")
+    @ExcludeMissing
+    fun _filteringScoreAmlSuspicions(): JsonField<Float> = filteringScoreAmlSuspicions
+
+    /**
      * Returns the raw JSON value of [finishedAt].
      *
      * Unlike [finishedAt], this method doesn't throw if the JSON field has an unexpected type.
@@ -503,6 +527,7 @@ private constructor(
         private var disableNotification: JsonField<Boolean> = JsonMissing.of()
         private var disableNotificationDate: JsonField<OffsetDateTime> = JsonMissing.of()
         private var exportType: JsonField<String> = JsonMissing.of()
+        private var filteringScoreAmlSuspicions: JsonField<Float> = JsonMissing.of()
         private var finishedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var ip: JsonField<String> = JsonMissing.of()
         private var language: JsonField<String> = JsonMissing.of()
@@ -527,6 +552,7 @@ private constructor(
             disableNotification = technicalData.disableNotification
             disableNotificationDate = technicalData.disableNotificationDate
             exportType = technicalData.exportType
+            filteringScoreAmlSuspicions = technicalData.filteringScoreAmlSuspicions
             finishedAt = technicalData.finishedAt
             ip = technicalData.ip
             language = technicalData.language
@@ -654,6 +680,21 @@ private constructor(
          * value.
          */
         fun exportType(exportType: JsonField<String>) = apply { this.exportType = exportType }
+
+        /** Minimum filtering score (between 0 and 1) for AML suspicions to be considered. */
+        fun filteringScoreAmlSuspicions(filteringScoreAmlSuspicions: Float) =
+            filteringScoreAmlSuspicions(JsonField.of(filteringScoreAmlSuspicions))
+
+        /**
+         * Sets [Builder.filteringScoreAmlSuspicions] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.filteringScoreAmlSuspicions] with a well-typed [Float]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun filteringScoreAmlSuspicions(filteringScoreAmlSuspicions: JsonField<Float>) = apply {
+            this.filteringScoreAmlSuspicions = filteringScoreAmlSuspicions
+        }
 
         /** Timestamp when the process finished. */
         fun finishedAt(finishedAt: OffsetDateTime) = finishedAt(JsonField.of(finishedAt))
@@ -857,6 +898,7 @@ private constructor(
                 disableNotification,
                 disableNotificationDate,
                 exportType,
+                filteringScoreAmlSuspicions,
                 finishedAt,
                 ip,
                 language,
@@ -889,6 +931,7 @@ private constructor(
         disableNotification()
         disableNotificationDate()
         exportType()
+        filteringScoreAmlSuspicions()
         finishedAt()
         ip()
         language()
@@ -927,6 +970,7 @@ private constructor(
             (if (disableNotification.asKnown() == null) 0 else 1) +
             (if (disableNotificationDate.asKnown() == null) 0 else 1) +
             (if (exportType.asKnown() == null) 0 else 1) +
+            (if (filteringScoreAmlSuspicions.asKnown() == null) 0 else 1) +
             (if (finishedAt.asKnown() == null) 0 else 1) +
             (if (ip.asKnown() == null) 0 else 1) +
             (if (language.asKnown() == null) 0 else 1) +
@@ -955,6 +999,7 @@ private constructor(
             disableNotification == other.disableNotification &&
             disableNotificationDate == other.disableNotificationDate &&
             exportType == other.exportType &&
+            filteringScoreAmlSuspicions == other.filteringScoreAmlSuspicions &&
             finishedAt == other.finishedAt &&
             ip == other.ip &&
             language == other.language &&
@@ -981,6 +1026,7 @@ private constructor(
             disableNotification,
             disableNotificationDate,
             exportType,
+            filteringScoreAmlSuspicions,
             finishedAt,
             ip,
             language,
@@ -1001,5 +1047,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "TechnicalData{activeAmlSuspicions=$activeAmlSuspicions, apiVersion=$apiVersion, approvedAt=$approvedAt, callbackUrl=$callbackUrl, callbackUrlNotification=$callbackUrlNotification, disableNotification=$disableNotification, disableNotificationDate=$disableNotificationDate, exportType=$exportType, finishedAt=$finishedAt, ip=$ip, language=$language, locationIp=$locationIp, needReviewAt=$needReviewAt, notificationConfirmation=$notificationConfirmation, qrCode=$qrCode, rawData=$rawData, rejectedAt=$rejectedAt, sessionDuration=$sessionDuration, startedAt=$startedAt, transferAt=$transferAt, transferMode=$transferMode, additionalProperties=$additionalProperties}"
+        "TechnicalData{activeAmlSuspicions=$activeAmlSuspicions, apiVersion=$apiVersion, approvedAt=$approvedAt, callbackUrl=$callbackUrl, callbackUrlNotification=$callbackUrlNotification, disableNotification=$disableNotification, disableNotificationDate=$disableNotificationDate, exportType=$exportType, filteringScoreAmlSuspicions=$filteringScoreAmlSuspicions, finishedAt=$finishedAt, ip=$ip, language=$language, locationIp=$locationIp, needReviewAt=$needReviewAt, notificationConfirmation=$notificationConfirmation, qrCode=$qrCode, rawData=$rawData, rejectedAt=$rejectedAt, sessionDuration=$sessionDuration, startedAt=$startedAt, transferAt=$transferAt, transferMode=$transferMode, additionalProperties=$additionalProperties}"
 }
