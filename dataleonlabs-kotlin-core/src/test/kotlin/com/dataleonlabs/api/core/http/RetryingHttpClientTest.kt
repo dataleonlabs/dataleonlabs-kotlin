@@ -2,6 +2,7 @@ package com.dataleonlabs.api.core.http
 
 import com.dataleonlabs.api.client.okhttp.OkHttpClient
 import com.dataleonlabs.api.core.RequestOptions
+import com.dataleonlabs.api.core.Sleeper
 import com.dataleonlabs.api.errors.DataleonlabsRetryableException
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo
@@ -289,11 +290,13 @@ internal class RetryingHttpClientTest {
                 .httpClient(failingHttpClient)
                 .maxRetries(2)
                 .sleeper(
-                    object : RetryingHttpClient.Sleeper {
+                    object : Sleeper {
 
                         override fun sleep(duration: Duration) {}
 
                         override suspend fun sleepAsync(duration: Duration) {}
+
+                        override fun close() {}
                     }
                 )
                 .build()
@@ -327,11 +330,13 @@ internal class RetryingHttpClientTest {
             .httpClient(httpClient)
             // Use a no-op `Sleeper` to make the test fast.
             .sleeper(
-                object : RetryingHttpClient.Sleeper {
+                object : Sleeper {
 
                     override fun sleep(duration: Duration) {}
 
                     override suspend fun sleepAsync(duration: Duration) {}
+
+                    override fun close() {}
                 }
             )
 
