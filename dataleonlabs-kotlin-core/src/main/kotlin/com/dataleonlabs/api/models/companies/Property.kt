@@ -16,6 +16,7 @@ import java.util.Objects
 
 /** Represents a generic property key-value pair with a specified type. */
 class Property
+@JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val name: JsonField<String>,
     private val type: JsonField<String>,

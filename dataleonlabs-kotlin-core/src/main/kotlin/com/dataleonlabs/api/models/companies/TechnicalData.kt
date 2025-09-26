@@ -17,6 +17,7 @@ import java.util.Objects
 
 /** Contains technical metadata related to processing and communication of an entity. */
 class TechnicalData
+@JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val activeAmlSuspicions: JsonField<Boolean>,
     private val apiVersion: JsonField<Long>,
