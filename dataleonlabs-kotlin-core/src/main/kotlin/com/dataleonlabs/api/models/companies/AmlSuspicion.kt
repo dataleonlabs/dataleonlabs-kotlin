@@ -20,6 +20,7 @@ import java.util.Objects
  * metadata such as risk score, origin, and linked watchlist types.
  */
 class AmlSuspicion
+@JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val caption: JsonField<String>,
     private val country: JsonField<String>,

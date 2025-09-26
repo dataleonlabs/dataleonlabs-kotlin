@@ -21,6 +21,7 @@ import java.util.Collections
 import java.util.Objects
 
 class Company
+@JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val amlSuspicions: JsonField<List<AmlSuspicion>>,
     private val certificat: JsonField<Certificat>,
@@ -683,6 +684,7 @@ private constructor(
      * and address.
      */
     class InnerCompany
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val address: JsonField<String>,
         private val closureDate: JsonField<LocalDate>,
@@ -1564,6 +1566,7 @@ private constructor(
 
         /** Contact information for the company, including email, phone number, and address. */
         class Contact
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(
             private val department: JsonField<String>,
             private val email: JsonField<String>,
@@ -1944,6 +1947,7 @@ private constructor(
 
     /** Represents a member or actor of a company, including personal and ownership information. */
     class Member
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val id: JsonField<String>,
         private val address: JsonField<String>,

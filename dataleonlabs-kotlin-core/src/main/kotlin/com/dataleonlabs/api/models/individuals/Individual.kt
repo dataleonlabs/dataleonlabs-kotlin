@@ -28,6 +28,7 @@ import java.util.Objects
  * Represents a single individual record, including identification, status, and associated metadata.
  */
 class Individual
+@JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
     private val amlSuspicions: JsonField<List<AmlSuspicion>>,
@@ -917,6 +918,7 @@ private constructor(
 
     /** Reference to the individual's identity document. */
     class IdentityCard
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val id: JsonField<String>,
         private val backDocumentSignedUrl: JsonField<String>,
@@ -1632,6 +1634,7 @@ private constructor(
 
     /** Personal details of the individual, such as name, date of birth, and contact info. */
     class Person
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val birthday: JsonField<String>,
         private val email: JsonField<String>,
@@ -2153,6 +2156,7 @@ private constructor(
      * or companies.
      */
     class Tag
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val key: JsonField<String>,
         private val private_: JsonField<Boolean>,

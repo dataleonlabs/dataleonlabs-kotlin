@@ -16,6 +16,7 @@ import java.util.Objects
 
 /** Represents a verification check result. */
 class Check
+@JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val masked: JsonField<Boolean>,
     private val message: JsonField<String>,

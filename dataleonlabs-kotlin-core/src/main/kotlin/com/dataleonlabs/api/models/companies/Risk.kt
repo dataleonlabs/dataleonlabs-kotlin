@@ -18,6 +18,7 @@ import java.util.Objects
  * Represents a risk assessment result, including a risk code, explanation, and a confidence score.
  */
 class Risk
+@JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val code: JsonField<String>,
     private val reason: JsonField<String>,
