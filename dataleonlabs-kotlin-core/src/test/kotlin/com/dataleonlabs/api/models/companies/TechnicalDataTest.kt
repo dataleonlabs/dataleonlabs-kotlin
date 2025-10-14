@@ -29,6 +29,13 @@ internal class TechnicalDataTest {
                 .locationIp("203.0.113.45")
                 .needReviewAt(null)
                 .notificationConfirmation(false)
+                .portalSteps(
+                    listOf(
+                        TechnicalData.PortalStep.IDENTITY_VERIFICATION,
+                        TechnicalData.PortalStep.SELFIE,
+                        TechnicalData.PortalStep.FACE_MATCH,
+                    )
+                )
                 .qrCode("false")
                 .rawData(true)
                 .rejectedAt(null)
@@ -56,6 +63,12 @@ internal class TechnicalDataTest {
         assertThat(technicalData.locationIp()).isEqualTo("203.0.113.45")
         assertThat(technicalData.needReviewAt()).isNull()
         assertThat(technicalData.notificationConfirmation()).isEqualTo(false)
+        assertThat(technicalData.portalSteps())
+            .containsExactly(
+                TechnicalData.PortalStep.IDENTITY_VERIFICATION,
+                TechnicalData.PortalStep.SELFIE,
+                TechnicalData.PortalStep.FACE_MATCH,
+            )
         assertThat(technicalData.qrCode()).isEqualTo("false")
         assertThat(technicalData.rawData()).isEqualTo(true)
         assertThat(technicalData.rejectedAt()).isNull()
@@ -87,6 +100,13 @@ internal class TechnicalDataTest {
                 .locationIp("203.0.113.45")
                 .needReviewAt(null)
                 .notificationConfirmation(false)
+                .portalSteps(
+                    listOf(
+                        TechnicalData.PortalStep.IDENTITY_VERIFICATION,
+                        TechnicalData.PortalStep.SELFIE,
+                        TechnicalData.PortalStep.FACE_MATCH,
+                    )
+                )
                 .qrCode("false")
                 .rawData(true)
                 .rejectedAt(null)

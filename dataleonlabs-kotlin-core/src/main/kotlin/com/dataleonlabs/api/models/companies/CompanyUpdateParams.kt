@@ -2,14 +2,17 @@
 
 package com.dataleonlabs.api.models.companies
 
+import com.dataleonlabs.api.core.Enum
 import com.dataleonlabs.api.core.ExcludeMissing
 import com.dataleonlabs.api.core.JsonField
 import com.dataleonlabs.api.core.JsonMissing
 import com.dataleonlabs.api.core.JsonValue
 import com.dataleonlabs.api.core.Params
+import com.dataleonlabs.api.core.checkKnown
 import com.dataleonlabs.api.core.checkRequired
 import com.dataleonlabs.api.core.http.Headers
 import com.dataleonlabs.api.core.http.QueryParams
+import com.dataleonlabs.api.core.toImmutable
 import com.dataleonlabs.api.errors.DataleonlabsInvalidDataException
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -1389,6 +1392,7 @@ private constructor(
         private val callbackUrlNotification: JsonField<String>,
         private val filteringScoreAmlSuspicions: JsonField<Float>,
         private val language: JsonField<String>,
+        private val portalSteps: JsonField<List<PortalStep>>,
         private val rawData: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -1410,6 +1414,9 @@ private constructor(
             @JsonProperty("language")
             @ExcludeMissing
             language: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("portal_steps")
+            @ExcludeMissing
+            portalSteps: JsonField<List<PortalStep>> = JsonMissing.of(),
             @JsonProperty("raw_data") @ExcludeMissing rawData: JsonField<Boolean> = JsonMissing.of(),
         ) : this(
             activeAmlSuspicions,
@@ -1417,6 +1424,7 @@ private constructor(
             callbackUrlNotification,
             filteringScoreAmlSuspicions,
             language,
+            portalSteps,
             rawData,
             mutableMapOf(),
         )
@@ -1464,6 +1472,14 @@ private constructor(
          *   if the server responded with an unexpected value).
          */
         fun language(): String? = language.getNullable("language")
+
+        /**
+         * List of steps to include in the portal workflow.
+         *
+         * @throws DataleonlabsInvalidDataException if the JSON field has an unexpected type (e.g.
+         *   if the server responded with an unexpected value).
+         */
+        fun portalSteps(): List<PortalStep>? = portalSteps.getNullable("portal_steps")
 
         /**
          * Flag indicating whether to include raw data in the response.
@@ -1520,6 +1536,15 @@ private constructor(
         @JsonProperty("language") @ExcludeMissing fun _language(): JsonField<String> = language
 
         /**
+         * Returns the raw JSON value of [portalSteps].
+         *
+         * Unlike [portalSteps], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("portal_steps")
+        @ExcludeMissing
+        fun _portalSteps(): JsonField<List<PortalStep>> = portalSteps
+
+        /**
          * Returns the raw JSON value of [rawData].
          *
          * Unlike [rawData], this method doesn't throw if the JSON field has an unexpected type.
@@ -1552,6 +1577,7 @@ private constructor(
             private var callbackUrlNotification: JsonField<String> = JsonMissing.of()
             private var filteringScoreAmlSuspicions: JsonField<Float> = JsonMissing.of()
             private var language: JsonField<String> = JsonMissing.of()
+            private var portalSteps: JsonField<MutableList<PortalStep>>? = null
             private var rawData: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -1561,6 +1587,7 @@ private constructor(
                 callbackUrlNotification = technicalData.callbackUrlNotification
                 filteringScoreAmlSuspicions = technicalData.filteringScoreAmlSuspicions
                 language = technicalData.language
+                portalSteps = technicalData.portalSteps.map { it.toMutableList() }
                 rawData = technicalData.rawData
                 additionalProperties = technicalData.additionalProperties.toMutableMap()
             }
@@ -1639,6 +1666,32 @@ private constructor(
              */
             fun language(language: JsonField<String>) = apply { this.language = language }
 
+            /** List of steps to include in the portal workflow. */
+            fun portalSteps(portalSteps: List<PortalStep>) = portalSteps(JsonField.of(portalSteps))
+
+            /**
+             * Sets [Builder.portalSteps] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.portalSteps] with a well-typed `List<PortalStep>`
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun portalSteps(portalSteps: JsonField<List<PortalStep>>) = apply {
+                this.portalSteps = portalSteps.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [PortalStep] to [portalSteps].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addPortalStep(portalStep: PortalStep) = apply {
+                portalSteps =
+                    (portalSteps ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("portalSteps", it).add(portalStep)
+                    }
+            }
+
             /** Flag indicating whether to include raw data in the response. */
             fun rawData(rawData: Boolean) = rawData(JsonField.of(rawData))
 
@@ -1682,6 +1735,7 @@ private constructor(
                     callbackUrlNotification,
                     filteringScoreAmlSuspicions,
                     language,
+                    (portalSteps ?: JsonMissing.of()).map { it.toImmutable() },
                     rawData,
                     additionalProperties.toMutableMap(),
                 )
@@ -1699,6 +1753,7 @@ private constructor(
             callbackUrlNotification()
             filteringScoreAmlSuspicions()
             language()
+            portalSteps()?.forEach { it.validate() }
             rawData()
             validated = true
         }
@@ -1723,7 +1778,156 @@ private constructor(
                 (if (callbackUrlNotification.asKnown() == null) 0 else 1) +
                 (if (filteringScoreAmlSuspicions.asKnown() == null) 0 else 1) +
                 (if (language.asKnown() == null) 0 else 1) +
+                (portalSteps.asKnown()?.sumOf { it.validity().toInt() } ?: 0) +
                 (if (rawData.asKnown() == null) 0 else 1)
+
+        class PortalStep @JsonCreator private constructor(private val value: JsonField<String>) :
+            Enum {
+
+            /**
+             * Returns this class instance's raw value.
+             *
+             * This is usually only useful if this instance was deserialized from data that doesn't
+             * match any known member, and you want to know that value. For example, if the SDK is
+             * on an older version than the API, then the API may respond with new members that the
+             * SDK is unaware of.
+             */
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+            companion object {
+
+                val IDENTITY_VERIFICATION = of("identity_verification")
+
+                val DOCUMENT_SIGNING = of("document_signing")
+
+                val PROOF_OF_ADDRESS = of("proof_of_address")
+
+                val SELFIE = of("selfie")
+
+                val FACE_MATCH = of("face_match")
+
+                fun of(value: String) = PortalStep(JsonField.of(value))
+            }
+
+            /** An enum containing [PortalStep]'s known values. */
+            enum class Known {
+                IDENTITY_VERIFICATION,
+                DOCUMENT_SIGNING,
+                PROOF_OF_ADDRESS,
+                SELFIE,
+                FACE_MATCH,
+            }
+
+            /**
+             * An enum containing [PortalStep]'s known values, as well as an [_UNKNOWN] member.
+             *
+             * An instance of [PortalStep] can contain an unknown value in a couple of cases:
+             * - It was deserialized from data that doesn't match any known member. For example, if
+             *   the SDK is on an older version than the API, then the API may respond with new
+             *   members that the SDK is unaware of.
+             * - It was constructed with an arbitrary value using the [of] method.
+             */
+            enum class Value {
+                IDENTITY_VERIFICATION,
+                DOCUMENT_SIGNING,
+                PROOF_OF_ADDRESS,
+                SELFIE,
+                FACE_MATCH,
+                /**
+                 * An enum member indicating that [PortalStep] was instantiated with an unknown
+                 * value.
+                 */
+                _UNKNOWN,
+            }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value, or
+             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+             *
+             * Use the [known] method instead if you're certain the value is always known or if you
+             * want to throw for the unknown case.
+             */
+            fun value(): Value =
+                when (this) {
+                    IDENTITY_VERIFICATION -> Value.IDENTITY_VERIFICATION
+                    DOCUMENT_SIGNING -> Value.DOCUMENT_SIGNING
+                    PROOF_OF_ADDRESS -> Value.PROOF_OF_ADDRESS
+                    SELFIE -> Value.SELFIE
+                    FACE_MATCH -> Value.FACE_MATCH
+                    else -> Value._UNKNOWN
+                }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value.
+             *
+             * Use the [value] method instead if you're uncertain the value is always known and
+             * don't want to throw for the unknown case.
+             *
+             * @throws DataleonlabsInvalidDataException if this class instance's value is a not a
+             *   known member.
+             */
+            fun known(): Known =
+                when (this) {
+                    IDENTITY_VERIFICATION -> Known.IDENTITY_VERIFICATION
+                    DOCUMENT_SIGNING -> Known.DOCUMENT_SIGNING
+                    PROOF_OF_ADDRESS -> Known.PROOF_OF_ADDRESS
+                    SELFIE -> Known.SELFIE
+                    FACE_MATCH -> Known.FACE_MATCH
+                    else -> throw DataleonlabsInvalidDataException("Unknown PortalStep: $value")
+                }
+
+            /**
+             * Returns this class instance's primitive wire representation.
+             *
+             * This differs from the [toString] method because that method is primarily for
+             * debugging and generally doesn't throw.
+             *
+             * @throws DataleonlabsInvalidDataException if this class instance's value does not have
+             *   the expected primitive type.
+             */
+            fun asString(): String =
+                _value().asString()
+                    ?: throw DataleonlabsInvalidDataException("Value is not a String")
+
+            private var validated: Boolean = false
+
+            fun validate(): PortalStep = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                known()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: DataleonlabsInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is PortalStep && value == other.value
+            }
+
+            override fun hashCode() = value.hashCode()
+
+            override fun toString() = value.toString()
+        }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -1736,6 +1940,7 @@ private constructor(
                 callbackUrlNotification == other.callbackUrlNotification &&
                 filteringScoreAmlSuspicions == other.filteringScoreAmlSuspicions &&
                 language == other.language &&
+                portalSteps == other.portalSteps &&
                 rawData == other.rawData &&
                 additionalProperties == other.additionalProperties
         }
@@ -1747,6 +1952,7 @@ private constructor(
                 callbackUrlNotification,
                 filteringScoreAmlSuspicions,
                 language,
+                portalSteps,
                 rawData,
                 additionalProperties,
             )
@@ -1755,7 +1961,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "TechnicalData{activeAmlSuspicions=$activeAmlSuspicions, callbackUrl=$callbackUrl, callbackUrlNotification=$callbackUrlNotification, filteringScoreAmlSuspicions=$filteringScoreAmlSuspicions, language=$language, rawData=$rawData, additionalProperties=$additionalProperties}"
+            "TechnicalData{activeAmlSuspicions=$activeAmlSuspicions, callbackUrl=$callbackUrl, callbackUrlNotification=$callbackUrlNotification, filteringScoreAmlSuspicions=$filteringScoreAmlSuspicions, language=$language, portalSteps=$portalSteps, rawData=$rawData, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
