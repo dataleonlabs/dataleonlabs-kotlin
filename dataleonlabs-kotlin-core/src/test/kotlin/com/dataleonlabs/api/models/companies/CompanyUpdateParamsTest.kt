@@ -39,6 +39,10 @@ internal class CompanyUpdateParamsTest {
                     .callbackUrlNotification("https://example.com/notify")
                     .filteringScoreAmlSuspicions(0.75f)
                     .language("fra")
+                    .addPortalStep(
+                        CompanyUpdateParams.TechnicalData.PortalStep.IDENTITY_VERIFICATION
+                    )
+                    .addPortalStep(CompanyUpdateParams.TechnicalData.PortalStep.DOCUMENT_SIGNING)
                     .rawData(true)
                     .build()
             )
@@ -92,6 +96,12 @@ internal class CompanyUpdateParamsTest {
                         .callbackUrlNotification("https://example.com/notify")
                         .filteringScoreAmlSuspicions(0.75f)
                         .language("fra")
+                        .addPortalStep(
+                            CompanyUpdateParams.TechnicalData.PortalStep.IDENTITY_VERIFICATION
+                        )
+                        .addPortalStep(
+                            CompanyUpdateParams.TechnicalData.PortalStep.DOCUMENT_SIGNING
+                        )
                         .rawData(true)
                         .build()
                 )
@@ -129,6 +139,10 @@ internal class CompanyUpdateParamsTest {
                     .callbackUrlNotification("https://example.com/notify")
                     .filteringScoreAmlSuspicions(0.75f)
                     .language("fra")
+                    .addPortalStep(
+                        CompanyUpdateParams.TechnicalData.PortalStep.IDENTITY_VERIFICATION
+                    )
+                    .addPortalStep(CompanyUpdateParams.TechnicalData.PortalStep.DOCUMENT_SIGNING)
                     .rawData(true)
                     .build()
             )

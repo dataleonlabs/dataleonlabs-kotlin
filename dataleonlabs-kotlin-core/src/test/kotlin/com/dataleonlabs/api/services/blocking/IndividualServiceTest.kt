@@ -50,6 +50,14 @@ internal class IndividualServiceTest {
                             .callbackUrlNotification("https://example.com/notify")
                             .filteringScoreAmlSuspicions(0.75f)
                             .language("fra")
+                            .portalSteps(
+                                listOf(
+                                    IndividualCreateParams.TechnicalData.PortalStep
+                                        .IDENTITY_VERIFICATION,
+                                    IndividualCreateParams.TechnicalData.PortalStep.SELFIE,
+                                    IndividualCreateParams.TechnicalData.PortalStep.FACE_MATCH,
+                                )
+                            )
                             .rawData(true)
                             .build()
                     )
@@ -116,6 +124,14 @@ internal class IndividualServiceTest {
                             .callbackUrlNotification("https://example.com/notify")
                             .filteringScoreAmlSuspicions(0.75f)
                             .language("fra")
+                            .portalSteps(
+                                listOf(
+                                    IndividualUpdateParams.TechnicalData.PortalStep
+                                        .IDENTITY_VERIFICATION,
+                                    IndividualUpdateParams.TechnicalData.PortalStep.SELFIE,
+                                    IndividualUpdateParams.TechnicalData.PortalStep.FACE_MATCH,
+                                )
+                            )
                             .rawData(true)
                             .build()
                     )
