@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.dataleonlabs.api/dataleonlabs-kotlin)](https://central.sonatype.com/artifact/com.dataleonlabs.api/dataleonlabs-kotlin/0.1.0)
-[![javadoc](https://javadoc.io/badge2/com.dataleonlabs.api/dataleonlabs-kotlin/0.1.0/javadoc.svg)](https://javadoc.io/doc/com.dataleonlabs.api/dataleonlabs-kotlin/0.1.0)
+[![Maven Central](https://img.shields.io/maven-central/v/com.dataleonlabs.api/dataleonlabs-kotlin)](https://central.sonatype.com/artifact/com.dataleonlabs.api/dataleonlabs-kotlin/0.2.0)
+[![javadoc](https://javadoc.io/badge2/com.dataleonlabs.api/dataleonlabs-kotlin/0.2.0/javadoc.svg)](https://javadoc.io/doc/com.dataleonlabs.api/dataleonlabs-kotlin/0.2.0)
 
 <!-- x-release-please-end -->
 
@@ -22,7 +22,7 @@ Use the Dataleonlabs MCP Server to enable AI assistants to interact with this AP
 
 <!-- x-release-please-start-version -->
 
-KDocs are available on [javadoc.io](https://javadoc.io/doc/com.dataleonlabs.api/dataleonlabs-kotlin/0.1.0).
+KDocs are available on [javadoc.io](https://javadoc.io/doc/com.dataleonlabs.api/dataleonlabs-kotlin/0.2.0).
 
 <!-- x-release-please-end -->
 
@@ -33,7 +33,7 @@ KDocs are available on [javadoc.io](https://javadoc.io/doc/com.dataleonlabs.api/
 ### Gradle
 
 ```kotlin
-implementation("com.dataleonlabs.api:dataleonlabs-kotlin:0.1.0")
+implementation("com.dataleonlabs.api:dataleonlabs-kotlin:0.2.0")
 ```
 
 ### Maven
@@ -42,7 +42,7 @@ implementation("com.dataleonlabs.api:dataleonlabs-kotlin:0.1.0")
 <dependency>
   <groupId>com.dataleonlabs.api</groupId>
   <artifactId>dataleonlabs-kotlin</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
 </dependency>
 ```
 
