@@ -2,10 +2,13 @@
 
 package com.dataleonlabs.api.models.companies
 
+import com.dataleonlabs.api.core.Enum
 import com.dataleonlabs.api.core.ExcludeMissing
 import com.dataleonlabs.api.core.JsonField
 import com.dataleonlabs.api.core.JsonMissing
 import com.dataleonlabs.api.core.JsonValue
+import com.dataleonlabs.api.core.checkKnown
+import com.dataleonlabs.api.core.toImmutable
 import com.dataleonlabs.api.errors.DataleonlabsInvalidDataException
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -17,10 +20,12 @@ import java.util.Objects
 
 /** Contains technical metadata related to processing and communication of an entity. */
 class TechnicalData
+@JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val activeAmlSuspicions: JsonField<Boolean>,
     private val apiVersion: JsonField<Long>,
     private val approvedAt: JsonField<OffsetDateTime>,
+    private val approvedBy: JsonField<String>,
     private val callbackUrl: JsonField<String>,
     private val callbackUrlNotification: JsonField<String>,
     private val disableNotification: JsonField<Boolean>,
@@ -32,10 +37,13 @@ private constructor(
     private val language: JsonField<String>,
     private val locationIp: JsonField<String>,
     private val needReviewAt: JsonField<OffsetDateTime>,
+    private val needReviewBy: JsonField<String>,
     private val notificationConfirmation: JsonField<Boolean>,
+    private val portalSteps: JsonField<List<PortalStep>>,
     private val qrCode: JsonField<String>,
     private val rawData: JsonField<Boolean>,
     private val rejectedAt: JsonField<OffsetDateTime>,
+    private val rejectedBy: JsonField<String>,
     private val sessionDuration: JsonField<Long>,
     private val startedAt: JsonField<OffsetDateTime>,
     private val transferAt: JsonField<OffsetDateTime>,
@@ -52,6 +60,9 @@ private constructor(
         @JsonProperty("approved_at")
         @ExcludeMissing
         approvedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("approved_by")
+        @ExcludeMissing
+        approvedBy: JsonField<String> = JsonMissing.of(),
         @JsonProperty("callback_url")
         @ExcludeMissing
         callbackUrl: JsonField<String> = JsonMissing.of(),
@@ -81,14 +92,23 @@ private constructor(
         @JsonProperty("need_review_at")
         @ExcludeMissing
         needReviewAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("need_review_by")
+        @ExcludeMissing
+        needReviewBy: JsonField<String> = JsonMissing.of(),
         @JsonProperty("notification_confirmation")
         @ExcludeMissing
         notificationConfirmation: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("portal_steps")
+        @ExcludeMissing
+        portalSteps: JsonField<List<PortalStep>> = JsonMissing.of(),
         @JsonProperty("qr_code") @ExcludeMissing qrCode: JsonField<String> = JsonMissing.of(),
         @JsonProperty("raw_data") @ExcludeMissing rawData: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("rejected_at")
         @ExcludeMissing
         rejectedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("rejected_by")
+        @ExcludeMissing
+        rejectedBy: JsonField<String> = JsonMissing.of(),
         @JsonProperty("session_duration")
         @ExcludeMissing
         sessionDuration: JsonField<Long> = JsonMissing.of(),
@@ -105,6 +125,7 @@ private constructor(
         activeAmlSuspicions,
         apiVersion,
         approvedAt,
+        approvedBy,
         callbackUrl,
         callbackUrlNotification,
         disableNotification,
@@ -116,10 +137,13 @@ private constructor(
         language,
         locationIp,
         needReviewAt,
+        needReviewBy,
         notificationConfirmation,
+        portalSteps,
         qrCode,
         rawData,
         rejectedAt,
+        rejectedBy,
         sessionDuration,
         startedAt,
         transferAt,
@@ -151,6 +175,14 @@ private constructor(
      *   the server responded with an unexpected value).
      */
     fun approvedAt(): OffsetDateTime? = approvedAt.getNullable("approved_at")
+
+    /**
+     * Identifier of the actor who approved (e.g., user id or username).
+     *
+     * @throws DataleonlabsInvalidDataException if the JSON field has an unexpected type (e.g. if
+     *   the server responded with an unexpected value).
+     */
+    fun approvedBy(): String? = approvedBy.getNullable("approved_by")
 
     /**
      * URL to receive callback data from the AML system.
@@ -244,6 +276,14 @@ private constructor(
     fun needReviewAt(): OffsetDateTime? = needReviewAt.getNullable("need_review_at")
 
     /**
+     * Identifier of the actor who requested review (e.g., user id or username).
+     *
+     * @throws DataleonlabsInvalidDataException if the JSON field has an unexpected type (e.g. if
+     *   the server responded with an unexpected value).
+     */
+    fun needReviewBy(): String? = needReviewBy.getNullable("need_review_by")
+
+    /**
      * Flag indicating if notification confirmation is required or received.
      *
      * @throws DataleonlabsInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -251,6 +291,14 @@ private constructor(
      */
     fun notificationConfirmation(): Boolean? =
         notificationConfirmation.getNullable("notification_confirmation")
+
+    /**
+     * List of steps to include in the portal workflow.
+     *
+     * @throws DataleonlabsInvalidDataException if the JSON field has an unexpected type (e.g. if
+     *   the server responded with an unexpected value).
+     */
+    fun portalSteps(): List<PortalStep>? = portalSteps.getNullable("portal_steps")
 
     /**
      * Indicates whether QR code is enabled ("true" or "false").
@@ -275,6 +323,14 @@ private constructor(
      *   the server responded with an unexpected value).
      */
     fun rejectedAt(): OffsetDateTime? = rejectedAt.getNullable("rejected_at")
+
+    /**
+     * Identifier of the actor who rejected (e.g., user id or username).
+     *
+     * @throws DataleonlabsInvalidDataException if the JSON field has an unexpected type (e.g. if
+     *   the server responded with an unexpected value).
+     */
+    fun rejectedBy(): String? = rejectedBy.getNullable("rejected_by")
 
     /**
      * Duration of the user session in seconds.
@@ -333,6 +389,13 @@ private constructor(
     @JsonProperty("approved_at")
     @ExcludeMissing
     fun _approvedAt(): JsonField<OffsetDateTime> = approvedAt
+
+    /**
+     * Returns the raw JSON value of [approvedBy].
+     *
+     * Unlike [approvedBy], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("approved_by") @ExcludeMissing fun _approvedBy(): JsonField<String> = approvedBy
 
     /**
      * Returns the raw JSON value of [callbackUrl].
@@ -430,6 +493,15 @@ private constructor(
     fun _needReviewAt(): JsonField<OffsetDateTime> = needReviewAt
 
     /**
+     * Returns the raw JSON value of [needReviewBy].
+     *
+     * Unlike [needReviewBy], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("need_review_by")
+    @ExcludeMissing
+    fun _needReviewBy(): JsonField<String> = needReviewBy
+
+    /**
      * Returns the raw JSON value of [notificationConfirmation].
      *
      * Unlike [notificationConfirmation], this method doesn't throw if the JSON field has an
@@ -438,6 +510,15 @@ private constructor(
     @JsonProperty("notification_confirmation")
     @ExcludeMissing
     fun _notificationConfirmation(): JsonField<Boolean> = notificationConfirmation
+
+    /**
+     * Returns the raw JSON value of [portalSteps].
+     *
+     * Unlike [portalSteps], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("portal_steps")
+    @ExcludeMissing
+    fun _portalSteps(): JsonField<List<PortalStep>> = portalSteps
 
     /**
      * Returns the raw JSON value of [qrCode].
@@ -461,6 +542,13 @@ private constructor(
     @JsonProperty("rejected_at")
     @ExcludeMissing
     fun _rejectedAt(): JsonField<OffsetDateTime> = rejectedAt
+
+    /**
+     * Returns the raw JSON value of [rejectedBy].
+     *
+     * Unlike [rejectedBy], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("rejected_by") @ExcludeMissing fun _rejectedBy(): JsonField<String> = rejectedBy
 
     /**
      * Returns the raw JSON value of [sessionDuration].
@@ -522,6 +610,7 @@ private constructor(
         private var activeAmlSuspicions: JsonField<Boolean> = JsonMissing.of()
         private var apiVersion: JsonField<Long> = JsonMissing.of()
         private var approvedAt: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var approvedBy: JsonField<String> = JsonMissing.of()
         private var callbackUrl: JsonField<String> = JsonMissing.of()
         private var callbackUrlNotification: JsonField<String> = JsonMissing.of()
         private var disableNotification: JsonField<Boolean> = JsonMissing.of()
@@ -533,10 +622,13 @@ private constructor(
         private var language: JsonField<String> = JsonMissing.of()
         private var locationIp: JsonField<String> = JsonMissing.of()
         private var needReviewAt: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var needReviewBy: JsonField<String> = JsonMissing.of()
         private var notificationConfirmation: JsonField<Boolean> = JsonMissing.of()
+        private var portalSteps: JsonField<MutableList<PortalStep>>? = null
         private var qrCode: JsonField<String> = JsonMissing.of()
         private var rawData: JsonField<Boolean> = JsonMissing.of()
         private var rejectedAt: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var rejectedBy: JsonField<String> = JsonMissing.of()
         private var sessionDuration: JsonField<Long> = JsonMissing.of()
         private var startedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var transferAt: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -547,6 +639,7 @@ private constructor(
             activeAmlSuspicions = technicalData.activeAmlSuspicions
             apiVersion = technicalData.apiVersion
             approvedAt = technicalData.approvedAt
+            approvedBy = technicalData.approvedBy
             callbackUrl = technicalData.callbackUrl
             callbackUrlNotification = technicalData.callbackUrlNotification
             disableNotification = technicalData.disableNotification
@@ -558,10 +651,13 @@ private constructor(
             language = technicalData.language
             locationIp = technicalData.locationIp
             needReviewAt = technicalData.needReviewAt
+            needReviewBy = technicalData.needReviewBy
             notificationConfirmation = technicalData.notificationConfirmation
+            portalSteps = technicalData.portalSteps.map { it.toMutableList() }
             qrCode = technicalData.qrCode
             rawData = technicalData.rawData
             rejectedAt = technicalData.rejectedAt
+            rejectedBy = technicalData.rejectedBy
             sessionDuration = technicalData.sessionDuration
             startedAt = technicalData.startedAt
             transferAt = technicalData.transferAt
@@ -611,6 +707,18 @@ private constructor(
         fun approvedAt(approvedAt: JsonField<OffsetDateTime>) = apply {
             this.approvedAt = approvedAt
         }
+
+        /** Identifier of the actor who approved (e.g., user id or username). */
+        fun approvedBy(approvedBy: String?) = approvedBy(JsonField.ofNullable(approvedBy))
+
+        /**
+         * Sets [Builder.approvedBy] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.approvedBy] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun approvedBy(approvedBy: JsonField<String>) = apply { this.approvedBy = approvedBy }
 
         /** URL to receive callback data from the AML system. */
         fun callbackUrl(callbackUrl: String) = callbackUrl(JsonField.of(callbackUrl))
@@ -759,6 +867,20 @@ private constructor(
             this.needReviewAt = needReviewAt
         }
 
+        /** Identifier of the actor who requested review (e.g., user id or username). */
+        fun needReviewBy(needReviewBy: String?) = needReviewBy(JsonField.ofNullable(needReviewBy))
+
+        /**
+         * Sets [Builder.needReviewBy] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.needReviewBy] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun needReviewBy(needReviewBy: JsonField<String>) = apply {
+            this.needReviewBy = needReviewBy
+        }
+
         /** Flag indicating if notification confirmation is required or received. */
         fun notificationConfirmation(notificationConfirmation: Boolean) =
             notificationConfirmation(JsonField.of(notificationConfirmation))
@@ -772,6 +894,32 @@ private constructor(
          */
         fun notificationConfirmation(notificationConfirmation: JsonField<Boolean>) = apply {
             this.notificationConfirmation = notificationConfirmation
+        }
+
+        /** List of steps to include in the portal workflow. */
+        fun portalSteps(portalSteps: List<PortalStep>) = portalSteps(JsonField.of(portalSteps))
+
+        /**
+         * Sets [Builder.portalSteps] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.portalSteps] with a well-typed `List<PortalStep>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun portalSteps(portalSteps: JsonField<List<PortalStep>>) = apply {
+            this.portalSteps = portalSteps.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [PortalStep] to [portalSteps].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addPortalStep(portalStep: PortalStep) = apply {
+            portalSteps =
+                (portalSteps ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("portalSteps", it).add(portalStep)
+                }
         }
 
         /** Indicates whether QR code is enabled ("true" or "false"). */
@@ -809,6 +957,18 @@ private constructor(
         fun rejectedAt(rejectedAt: JsonField<OffsetDateTime>) = apply {
             this.rejectedAt = rejectedAt
         }
+
+        /** Identifier of the actor who rejected (e.g., user id or username). */
+        fun rejectedBy(rejectedBy: String?) = rejectedBy(JsonField.ofNullable(rejectedBy))
+
+        /**
+         * Sets [Builder.rejectedBy] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.rejectedBy] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun rejectedBy(rejectedBy: JsonField<String>) = apply { this.rejectedBy = rejectedBy }
 
         /** Duration of the user session in seconds. */
         fun sessionDuration(sessionDuration: Long) = sessionDuration(JsonField.of(sessionDuration))
@@ -893,6 +1053,7 @@ private constructor(
                 activeAmlSuspicions,
                 apiVersion,
                 approvedAt,
+                approvedBy,
                 callbackUrl,
                 callbackUrlNotification,
                 disableNotification,
@@ -904,10 +1065,13 @@ private constructor(
                 language,
                 locationIp,
                 needReviewAt,
+                needReviewBy,
                 notificationConfirmation,
+                (portalSteps ?: JsonMissing.of()).map { it.toImmutable() },
                 qrCode,
                 rawData,
                 rejectedAt,
+                rejectedBy,
                 sessionDuration,
                 startedAt,
                 transferAt,
@@ -926,6 +1090,7 @@ private constructor(
         activeAmlSuspicions()
         apiVersion()
         approvedAt()
+        approvedBy()
         callbackUrl()
         callbackUrlNotification()
         disableNotification()
@@ -937,10 +1102,13 @@ private constructor(
         language()
         locationIp()
         needReviewAt()
+        needReviewBy()
         notificationConfirmation()
+        portalSteps()?.forEach { it.validate() }
         qrCode()
         rawData()
         rejectedAt()
+        rejectedBy()
         sessionDuration()
         startedAt()
         transferAt()
@@ -965,6 +1133,7 @@ private constructor(
         (if (activeAmlSuspicions.asKnown() == null) 0 else 1) +
             (if (apiVersion.asKnown() == null) 0 else 1) +
             (if (approvedAt.asKnown() == null) 0 else 1) +
+            (if (approvedBy.asKnown() == null) 0 else 1) +
             (if (callbackUrl.asKnown() == null) 0 else 1) +
             (if (callbackUrlNotification.asKnown() == null) 0 else 1) +
             (if (disableNotification.asKnown() == null) 0 else 1) +
@@ -976,14 +1145,162 @@ private constructor(
             (if (language.asKnown() == null) 0 else 1) +
             (if (locationIp.asKnown() == null) 0 else 1) +
             (if (needReviewAt.asKnown() == null) 0 else 1) +
+            (if (needReviewBy.asKnown() == null) 0 else 1) +
             (if (notificationConfirmation.asKnown() == null) 0 else 1) +
+            (portalSteps.asKnown()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (qrCode.asKnown() == null) 0 else 1) +
             (if (rawData.asKnown() == null) 0 else 1) +
             (if (rejectedAt.asKnown() == null) 0 else 1) +
+            (if (rejectedBy.asKnown() == null) 0 else 1) +
             (if (sessionDuration.asKnown() == null) 0 else 1) +
             (if (startedAt.asKnown() == null) 0 else 1) +
             (if (transferAt.asKnown() == null) 0 else 1) +
             (if (transferMode.asKnown() == null) 0 else 1)
+
+    class PortalStep @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            val IDENTITY_VERIFICATION = of("identity_verification")
+
+            val DOCUMENT_SIGNING = of("document_signing")
+
+            val PROOF_OF_ADDRESS = of("proof_of_address")
+
+            val SELFIE = of("selfie")
+
+            val FACE_MATCH = of("face_match")
+
+            fun of(value: String) = PortalStep(JsonField.of(value))
+        }
+
+        /** An enum containing [PortalStep]'s known values. */
+        enum class Known {
+            IDENTITY_VERIFICATION,
+            DOCUMENT_SIGNING,
+            PROOF_OF_ADDRESS,
+            SELFIE,
+            FACE_MATCH,
+        }
+
+        /**
+         * An enum containing [PortalStep]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [PortalStep] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            IDENTITY_VERIFICATION,
+            DOCUMENT_SIGNING,
+            PROOF_OF_ADDRESS,
+            SELFIE,
+            FACE_MATCH,
+            /**
+             * An enum member indicating that [PortalStep] was instantiated with an unknown value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                IDENTITY_VERIFICATION -> Value.IDENTITY_VERIFICATION
+                DOCUMENT_SIGNING -> Value.DOCUMENT_SIGNING
+                PROOF_OF_ADDRESS -> Value.PROOF_OF_ADDRESS
+                SELFIE -> Value.SELFIE
+                FACE_MATCH -> Value.FACE_MATCH
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws DataleonlabsInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                IDENTITY_VERIFICATION -> Known.IDENTITY_VERIFICATION
+                DOCUMENT_SIGNING -> Known.DOCUMENT_SIGNING
+                PROOF_OF_ADDRESS -> Known.PROOF_OF_ADDRESS
+                SELFIE -> Known.SELFIE
+                FACE_MATCH -> Known.FACE_MATCH
+                else -> throw DataleonlabsInvalidDataException("Unknown PortalStep: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws DataleonlabsInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString() ?: throw DataleonlabsInvalidDataException("Value is not a String")
+
+        private var validated: Boolean = false
+
+        fun validate(): PortalStep = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: DataleonlabsInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is PortalStep && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -994,6 +1311,7 @@ private constructor(
             activeAmlSuspicions == other.activeAmlSuspicions &&
             apiVersion == other.apiVersion &&
             approvedAt == other.approvedAt &&
+            approvedBy == other.approvedBy &&
             callbackUrl == other.callbackUrl &&
             callbackUrlNotification == other.callbackUrlNotification &&
             disableNotification == other.disableNotification &&
@@ -1005,10 +1323,13 @@ private constructor(
             language == other.language &&
             locationIp == other.locationIp &&
             needReviewAt == other.needReviewAt &&
+            needReviewBy == other.needReviewBy &&
             notificationConfirmation == other.notificationConfirmation &&
+            portalSteps == other.portalSteps &&
             qrCode == other.qrCode &&
             rawData == other.rawData &&
             rejectedAt == other.rejectedAt &&
+            rejectedBy == other.rejectedBy &&
             sessionDuration == other.sessionDuration &&
             startedAt == other.startedAt &&
             transferAt == other.transferAt &&
@@ -1021,6 +1342,7 @@ private constructor(
             activeAmlSuspicions,
             apiVersion,
             approvedAt,
+            approvedBy,
             callbackUrl,
             callbackUrlNotification,
             disableNotification,
@@ -1032,10 +1354,13 @@ private constructor(
             language,
             locationIp,
             needReviewAt,
+            needReviewBy,
             notificationConfirmation,
+            portalSteps,
             qrCode,
             rawData,
             rejectedAt,
+            rejectedBy,
             sessionDuration,
             startedAt,
             transferAt,
@@ -1047,5 +1372,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "TechnicalData{activeAmlSuspicions=$activeAmlSuspicions, apiVersion=$apiVersion, approvedAt=$approvedAt, callbackUrl=$callbackUrl, callbackUrlNotification=$callbackUrlNotification, disableNotification=$disableNotification, disableNotificationDate=$disableNotificationDate, exportType=$exportType, filteringScoreAmlSuspicions=$filteringScoreAmlSuspicions, finishedAt=$finishedAt, ip=$ip, language=$language, locationIp=$locationIp, needReviewAt=$needReviewAt, notificationConfirmation=$notificationConfirmation, qrCode=$qrCode, rawData=$rawData, rejectedAt=$rejectedAt, sessionDuration=$sessionDuration, startedAt=$startedAt, transferAt=$transferAt, transferMode=$transferMode, additionalProperties=$additionalProperties}"
+        "TechnicalData{activeAmlSuspicions=$activeAmlSuspicions, apiVersion=$apiVersion, approvedAt=$approvedAt, approvedBy=$approvedBy, callbackUrl=$callbackUrl, callbackUrlNotification=$callbackUrlNotification, disableNotification=$disableNotification, disableNotificationDate=$disableNotificationDate, exportType=$exportType, filteringScoreAmlSuspicions=$filteringScoreAmlSuspicions, finishedAt=$finishedAt, ip=$ip, language=$language, locationIp=$locationIp, needReviewAt=$needReviewAt, needReviewBy=$needReviewBy, notificationConfirmation=$notificationConfirmation, portalSteps=$portalSteps, qrCode=$qrCode, rawData=$rawData, rejectedAt=$rejectedAt, rejectedBy=$rejectedBy, sessionDuration=$sessionDuration, startedAt=$startedAt, transferAt=$transferAt, transferMode=$transferMode, additionalProperties=$additionalProperties}"
 }

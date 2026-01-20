@@ -32,6 +32,13 @@ internal class IndividualUpdateParamsTest {
                     .callbackUrlNotification("https://example.com/notify")
                     .filteringScoreAmlSuspicions(0.75f)
                     .language("fra")
+                    .portalSteps(
+                        listOf(
+                            IndividualUpdateParams.TechnicalData.PortalStep.IDENTITY_VERIFICATION,
+                            IndividualUpdateParams.TechnicalData.PortalStep.SELFIE,
+                            IndividualUpdateParams.TechnicalData.PortalStep.FACE_MATCH,
+                        )
+                    )
                     .rawData(true)
                     .build()
             )
@@ -77,6 +84,14 @@ internal class IndividualUpdateParamsTest {
                         .callbackUrlNotification("https://example.com/notify")
                         .filteringScoreAmlSuspicions(0.75f)
                         .language("fra")
+                        .portalSteps(
+                            listOf(
+                                IndividualUpdateParams.TechnicalData.PortalStep
+                                    .IDENTITY_VERIFICATION,
+                                IndividualUpdateParams.TechnicalData.PortalStep.SELFIE,
+                                IndividualUpdateParams.TechnicalData.PortalStep.FACE_MATCH,
+                            )
+                        )
                         .rawData(true)
                         .build()
                 )
@@ -107,6 +122,13 @@ internal class IndividualUpdateParamsTest {
                     .callbackUrlNotification("https://example.com/notify")
                     .filteringScoreAmlSuspicions(0.75f)
                     .language("fra")
+                    .portalSteps(
+                        listOf(
+                            IndividualUpdateParams.TechnicalData.PortalStep.IDENTITY_VERIFICATION,
+                            IndividualUpdateParams.TechnicalData.PortalStep.SELFIE,
+                            IndividualUpdateParams.TechnicalData.PortalStep.FACE_MATCH,
+                        )
+                    )
                     .rawData(true)
                     .build()
             )

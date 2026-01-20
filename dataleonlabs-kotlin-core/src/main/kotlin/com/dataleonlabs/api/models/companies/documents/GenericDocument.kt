@@ -20,6 +20,7 @@ import java.util.Objects
 
 /** Represents a general document with metadata, verification checks, and extracted data. */
 class GenericDocument
+@JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
     private val checks: JsonField<List<Check>>,
@@ -511,6 +512,7 @@ private constructor(
             (values.asKnown()?.sumOf { it.validity().toInt() } ?: 0)
 
     class Table
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val operation: JsonField<List<JsonValue>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -672,6 +674,7 @@ private constructor(
     }
 
     class Value
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val confidence: JsonField<Double>,
         private val name: JsonField<String>,

@@ -28,6 +28,7 @@ import java.util.Objects
  * Represents a single individual record, including identification, status, and associated metadata.
  */
 class Individual
+@JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
     private val amlSuspicions: JsonField<List<AmlSuspicion>>,
@@ -917,12 +918,14 @@ private constructor(
 
     /** Reference to the individual's identity document. */
     class IdentityCard
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val id: JsonField<String>,
         private val backDocumentSignedUrl: JsonField<String>,
         private val birthPlace: JsonField<String>,
         private val birthday: JsonField<String>,
         private val country: JsonField<String>,
+        private val entitlementDate: JsonField<String>,
         private val expirationDate: JsonField<String>,
         private val firstName: JsonField<String>,
         private val frontDocumentSignedUrl: JsonField<String>,
@@ -949,6 +952,9 @@ private constructor(
             @ExcludeMissing
             birthday: JsonField<String> = JsonMissing.of(),
             @JsonProperty("country") @ExcludeMissing country: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("entitlement_date")
+            @ExcludeMissing
+            entitlementDate: JsonField<String> = JsonMissing.of(),
             @JsonProperty("expiration_date")
             @ExcludeMissing
             expirationDate: JsonField<String> = JsonMissing.of(),
@@ -981,6 +987,7 @@ private constructor(
             birthPlace,
             birthday,
             country,
+            entitlementDate,
             expirationDate,
             firstName,
             frontDocumentSignedUrl,
@@ -1034,6 +1041,14 @@ private constructor(
          *   if the server responded with an unexpected value).
          */
         fun country(): String? = country.getNullable("country")
+
+        /**
+         * Date of entitlement or validity start date, in YYYY-MM-DD format.
+         *
+         * @throws DataleonlabsInvalidDataException if the JSON field has an unexpected type (e.g.
+         *   if the server responded with an unexpected value).
+         */
+        fun entitlementDate(): String? = entitlementDate.getNullable("entitlement_date")
 
         /**
          * Expiration date of the document, in YYYY-MM-DD format.
@@ -1157,6 +1172,16 @@ private constructor(
         @JsonProperty("country") @ExcludeMissing fun _country(): JsonField<String> = country
 
         /**
+         * Returns the raw JSON value of [entitlementDate].
+         *
+         * Unlike [entitlementDate], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("entitlement_date")
+        @ExcludeMissing
+        fun _entitlementDate(): JsonField<String> = entitlementDate
+
+        /**
          * Returns the raw JSON value of [expirationDate].
          *
          * Unlike [expirationDate], this method doesn't throw if the JSON field has an unexpected
@@ -1258,6 +1283,7 @@ private constructor(
             private var birthPlace: JsonField<String> = JsonMissing.of()
             private var birthday: JsonField<String> = JsonMissing.of()
             private var country: JsonField<String> = JsonMissing.of()
+            private var entitlementDate: JsonField<String> = JsonMissing.of()
             private var expirationDate: JsonField<String> = JsonMissing.of()
             private var firstName: JsonField<String> = JsonMissing.of()
             private var frontDocumentSignedUrl: JsonField<String> = JsonMissing.of()
@@ -1276,6 +1302,7 @@ private constructor(
                 birthPlace = identityCard.birthPlace
                 birthday = identityCard.birthday
                 country = identityCard.country
+                entitlementDate = identityCard.entitlementDate
                 expirationDate = identityCard.expirationDate
                 firstName = identityCard.firstName
                 frontDocumentSignedUrl = identityCard.frontDocumentSignedUrl
@@ -1351,6 +1378,21 @@ private constructor(
              * supported value.
              */
             fun country(country: JsonField<String>) = apply { this.country = country }
+
+            /** Date of entitlement or validity start date, in YYYY-MM-DD format. */
+            fun entitlementDate(entitlementDate: String) =
+                entitlementDate(JsonField.of(entitlementDate))
+
+            /**
+             * Sets [Builder.entitlementDate] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.entitlementDate] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun entitlementDate(entitlementDate: JsonField<String>) = apply {
+                this.entitlementDate = entitlementDate
+            }
 
             /** Expiration date of the document, in YYYY-MM-DD format. */
             fun expirationDate(expirationDate: String) =
@@ -1509,6 +1551,7 @@ private constructor(
                     birthPlace,
                     birthday,
                     country,
+                    entitlementDate,
                     expirationDate,
                     firstName,
                     frontDocumentSignedUrl,
@@ -1535,6 +1578,7 @@ private constructor(
             birthPlace()
             birthday()
             country()
+            entitlementDate()
             expirationDate()
             firstName()
             frontDocumentSignedUrl()
@@ -1568,6 +1612,7 @@ private constructor(
                 (if (birthPlace.asKnown() == null) 0 else 1) +
                 (if (birthday.asKnown() == null) 0 else 1) +
                 (if (country.asKnown() == null) 0 else 1) +
+                (if (entitlementDate.asKnown() == null) 0 else 1) +
                 (if (expirationDate.asKnown() == null) 0 else 1) +
                 (if (firstName.asKnown() == null) 0 else 1) +
                 (if (frontDocumentSignedUrl.asKnown() == null) 0 else 1) +
@@ -1590,6 +1635,7 @@ private constructor(
                 birthPlace == other.birthPlace &&
                 birthday == other.birthday &&
                 country == other.country &&
+                entitlementDate == other.entitlementDate &&
                 expirationDate == other.expirationDate &&
                 firstName == other.firstName &&
                 frontDocumentSignedUrl == other.frontDocumentSignedUrl &&
@@ -1610,6 +1656,7 @@ private constructor(
                 birthPlace,
                 birthday,
                 country,
+                entitlementDate,
                 expirationDate,
                 firstName,
                 frontDocumentSignedUrl,
@@ -1627,11 +1674,12 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "IdentityCard{id=$id, backDocumentSignedUrl=$backDocumentSignedUrl, birthPlace=$birthPlace, birthday=$birthday, country=$country, expirationDate=$expirationDate, firstName=$firstName, frontDocumentSignedUrl=$frontDocumentSignedUrl, gender=$gender, issueDate=$issueDate, lastName=$lastName, mrzLine1=$mrzLine1, mrzLine2=$mrzLine2, mrzLine3=$mrzLine3, type=$type, additionalProperties=$additionalProperties}"
+            "IdentityCard{id=$id, backDocumentSignedUrl=$backDocumentSignedUrl, birthPlace=$birthPlace, birthday=$birthday, country=$country, entitlementDate=$entitlementDate, expirationDate=$expirationDate, firstName=$firstName, frontDocumentSignedUrl=$frontDocumentSignedUrl, gender=$gender, issueDate=$issueDate, lastName=$lastName, mrzLine1=$mrzLine1, mrzLine2=$mrzLine2, mrzLine3=$mrzLine3, type=$type, additionalProperties=$additionalProperties}"
     }
 
     /** Personal details of the individual, such as name, date of birth, and contact info. */
     class Person
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val birthday: JsonField<String>,
         private val email: JsonField<String>,
@@ -2153,6 +2201,7 @@ private constructor(
      * or companies.
      */
     class Tag
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val key: JsonField<String>,
         private val private_: JsonField<Boolean>,

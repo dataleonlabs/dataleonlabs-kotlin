@@ -17,6 +17,7 @@ internal class TechnicalDataTest {
                 .activeAmlSuspicions(false)
                 .apiVersion(2L)
                 .approvedAt(OffsetDateTime.parse("2025-05-01T12:00:00Z"))
+                .approvedBy("user:john.doe")
                 .callbackUrl("https://example.com/callback")
                 .callbackUrlNotification("https://example.com/notify")
                 .disableNotification(false)
@@ -28,10 +29,19 @@ internal class TechnicalDataTest {
                 .language("fra")
                 .locationIp("203.0.113.45")
                 .needReviewAt(null)
+                .needReviewBy("user:reviewer01")
                 .notificationConfirmation(false)
+                .portalSteps(
+                    listOf(
+                        TechnicalData.PortalStep.IDENTITY_VERIFICATION,
+                        TechnicalData.PortalStep.SELFIE,
+                        TechnicalData.PortalStep.FACE_MATCH,
+                    )
+                )
                 .qrCode("false")
                 .rawData(true)
                 .rejectedAt(null)
+                .rejectedBy("user:jane.doe")
                 .sessionDuration(45L)
                 .startedAt(OffsetDateTime.parse("2025-05-05T13:00:00Z"))
                 .transferAt(OffsetDateTime.parse("2025-07-12T14:00:00Z"))
@@ -42,6 +52,7 @@ internal class TechnicalDataTest {
         assertThat(technicalData.apiVersion()).isEqualTo(2L)
         assertThat(technicalData.approvedAt())
             .isEqualTo(OffsetDateTime.parse("2025-05-01T12:00:00Z"))
+        assertThat(technicalData.approvedBy()).isEqualTo("user:john.doe")
         assertThat(technicalData.callbackUrl()).isEqualTo("https://example.com/callback")
         assertThat(technicalData.callbackUrlNotification()).isEqualTo("https://example.com/notify")
         assertThat(technicalData.disableNotification()).isEqualTo(false)
@@ -55,10 +66,18 @@ internal class TechnicalDataTest {
         assertThat(technicalData.language()).isEqualTo("fra")
         assertThat(technicalData.locationIp()).isEqualTo("203.0.113.45")
         assertThat(technicalData.needReviewAt()).isNull()
+        assertThat(technicalData.needReviewBy()).isEqualTo("user:reviewer01")
         assertThat(technicalData.notificationConfirmation()).isEqualTo(false)
+        assertThat(technicalData.portalSteps())
+            .containsExactly(
+                TechnicalData.PortalStep.IDENTITY_VERIFICATION,
+                TechnicalData.PortalStep.SELFIE,
+                TechnicalData.PortalStep.FACE_MATCH,
+            )
         assertThat(technicalData.qrCode()).isEqualTo("false")
         assertThat(technicalData.rawData()).isEqualTo(true)
         assertThat(technicalData.rejectedAt()).isNull()
+        assertThat(technicalData.rejectedBy()).isEqualTo("user:jane.doe")
         assertThat(technicalData.sessionDuration()).isEqualTo(45L)
         assertThat(technicalData.startedAt())
             .isEqualTo(OffsetDateTime.parse("2025-05-05T13:00:00Z"))
@@ -75,6 +94,7 @@ internal class TechnicalDataTest {
                 .activeAmlSuspicions(false)
                 .apiVersion(2L)
                 .approvedAt(OffsetDateTime.parse("2025-05-01T12:00:00Z"))
+                .approvedBy("user:john.doe")
                 .callbackUrl("https://example.com/callback")
                 .callbackUrlNotification("https://example.com/notify")
                 .disableNotification(false)
@@ -86,10 +106,19 @@ internal class TechnicalDataTest {
                 .language("fra")
                 .locationIp("203.0.113.45")
                 .needReviewAt(null)
+                .needReviewBy("user:reviewer01")
                 .notificationConfirmation(false)
+                .portalSteps(
+                    listOf(
+                        TechnicalData.PortalStep.IDENTITY_VERIFICATION,
+                        TechnicalData.PortalStep.SELFIE,
+                        TechnicalData.PortalStep.FACE_MATCH,
+                    )
+                )
                 .qrCode("false")
                 .rawData(true)
                 .rejectedAt(null)
+                .rejectedBy("user:jane.doe")
                 .sessionDuration(45L)
                 .startedAt(OffsetDateTime.parse("2025-05-05T13:00:00Z"))
                 .transferAt(OffsetDateTime.parse("2025-07-12T14:00:00Z"))

@@ -4,7 +4,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":dataleonlabs-kotlin"))
+    implementation(project(":dataleonlabs-kotlin-core"))
+    implementation(project(":dataleonlabs-kotlin-client-okhttp"))
 }
 
 application {
